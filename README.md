@@ -59,6 +59,17 @@ GET http://localhost:3334/health
 GET http://localhost:3334/rooms
 ```
 
+### Criar Sala
+```http
+POST http://localhost:3334/rooms
+Content-Type: application/json
+
+{
+  "name": "Sala de teste",
+  "description": "Essa sala é de teste"
+}
+```
+
 ## 📌 Observações
 - O arquivo de configuração do Drizzle é `drizzle.config.ts`.
 - Scripts de seed e migrations estão em `src/db`.
