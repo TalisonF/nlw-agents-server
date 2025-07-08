@@ -75,6 +75,16 @@ Content-Type: application/json
 GET http://localhost:3334/rooms/{roomId}/questions
 ```
 
+### Criar Pergunta em uma Sala
+```http
+POST http://localhost:3334/rooms/{roomId}/questions
+Content-Type: application/json
+
+{
+  "question": "Questão de teste"
+}
+```
+
 ## 📌 Observações
 - O arquivo de configuração do Drizzle é `drizzle.config.ts`.
 - Scripts de seed e migrations estão em `src/db`.
