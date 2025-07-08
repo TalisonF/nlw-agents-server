@@ -70,6 +70,11 @@ Content-Type: application/json
 }
 ```
 
+### Listar Perguntas de uma Sala
+```http
+GET http://localhost:3334/rooms/{roomId}/questions
+```
+
 ## 📌 Observações
 - O arquivo de configuração do Drizzle é `drizzle.config.ts`.
 - Scripts de seed e migrations estão em `src/db`.
