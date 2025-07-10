@@ -30,16 +30,16 @@ API para gerenciamento de salas e agentes, utilizando Node.js, TypeScript e Driz
    ```
 
 3. **Configure as variáveis de ambiente:**
-   - Copie o arquivo `env.example` para `.env`:
+   - Copie o arquivo `.env.example` para `.env`:
      ```sh
-     cp env.example .env
+     cp .env.example .env
      ```
    - Ajuste as variáveis de ambiente no arquivo `.env` conforme necessário.
 
 4. **Rode as migrations e seed:**
    ```sh
-   npm run migrate
-   npm run seed
+   npm run db:migrate
+   npm run db:seed
    ```
 
 5. **Inicie o servidor:**
@@ -75,19 +75,29 @@ Content-Type: application/json
 GET http://localhost:3334/rooms/{roomId}/questions
 ```
 
+### Enviar Texto para a Sala
+```http
+POST http://localhost:3334/rooms/{roomId}/text
+Content-Type: application/json
+
+{
+  "text": "Eu tenho um cachorro que se chama Max."
+}
+```
+
 ### Criar Pergunta em uma Sala
 ```http
 POST http://localhost:3334/rooms/{roomId}/questions
 Content-Type: application/json
 
 {
-  "question": "Questão de teste"
+  "question": "Qual o nome do cachorro?"
 }
 ```
 
 ## 📌 Observações
-- O arquivo de configuração do Drizzle é `drizzle.config.ts`.
-- Scripts de seed e migrations estão em `src/db`.
+- O arquivo de configuração do Drizzle é [`drizzle.config.ts`](drizzle.config.ts).
+- Scripts de seed e migrations estão em [`src/db`](src/db).
 
 ---
 Projeto desenvolvido durante o NLW da Rocketseat.

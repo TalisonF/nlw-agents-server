@@ -44,11 +44,8 @@ export async function generateEmbeddings(text: string) {
   return response.embeddings[0].values;
 }
 
-export async function generateAnswer(
-  question: string,
-  transcriptions: string[]
-) {
-  const context = transcriptions.join('\n\n');
+export async function generateAnswer(question: string, textsContext: string[]) {
+  const context = textsContext.join('\n\n');
 
   const prompt = `
     Com base no texto fornecido abaixo como contexto, responda a pergunta de forma clara e precisa em português do Brasil.
@@ -64,8 +61,8 @@ export async function generateAnswer(
     - Se a resposta não for encontrada no contexto, apenas responda que não possui informações suficientes para responder;
     - Seja objetivo;
     - Mantenha um tom educativo e profissional;
-    - Cite trechos relevantes do contexto se apropriado;
-    - Se for citar o contexto, utilize o temo "conteúdo da aula";
+    - Cite trechos relevantes do contexto se necessário;
+    - Se for citar o contexto, utilize o termo "no seguinte trecho";
   `.trim();
 
   const response = await gemeni.models.generateContent({

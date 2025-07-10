@@ -26,28 +26,28 @@ export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
       const embeddingsAsString = `[${embeddings.join(',')}]`;
       const chunks = await db
         .select({
-          id: schema.audioChunks.id,
-          transcription: schema.audioChunks.transcription,
-          similarity: sql<number>`1 - (${schema.audioChunks.embeddings} <=> ${embeddingsAsString}::vector)`,
+          id: schema.filesChunks.id,
+          text: schema.filesChunks.text,
+          similarity: sql<number>`1 - (${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector)`,
         })
-        .from(schema.audioChunks)
+        .from(schema.filesChunks)
         .where(
           and(
-            eq(schema.audioChunks.roomId, roomId),
-            sql`1 - (${schema.audioChunks.embeddings} <=> ${embeddingsAsString}::vector) > 0.7`
+            eq(schema.filesChunks.roomId, roomId),
+            sql`1 - (${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector) > 0.7`
           )
         )
         .orderBy(
-          sql`${schema.audioChunks.embeddings} <=> ${embeddingsAsString}::vector`
+          sql`${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector`
         )
         .limit(3);
 
       let answer: string | null = null;
 
       if (chunks.length > 0) {
-        const transcriptions = chunks.map((chunk) => chunk.transcription);
+        const texts = chunks.map((chunk) => chunk.text);
 
-        answer = await generateAnswer(question, transcriptions);
+        answer = await generateAnswer(question, texts);
       }
       const result = await db
         .insert(schema.questions)

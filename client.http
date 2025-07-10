@@ -23,7 +23,7 @@ Content-Type: application/json
   "description": "Essa sala é de teste"
 }
 ###
-@roomId = {{createRoom.response.body.$.roomId}}
+@roomId = 43453019-3aec-4fce-a50f-c47a5fae0677
 ###
 # get room questions
 # @name getRoomQuestions
@@ -31,11 +31,20 @@ GET {{baseUrl}}/rooms/{{roomId}}/questions
 
 ###
 
+# Upload text chuck
+
+POST {{baseUrl}}/rooms/{{roomId}}/text
+Content-Type: application/json
+
+{
+  "text": "Eu tenho um cachorro que se chama Max."
+}
+
 # Create question
 # @name createQuestion
 POST {{baseUrl}}/rooms/{{roomId}}/questions
 Content-Type: application/json
 
 {
-  "question": "Questão de teste"
+  "question": "Qual o nome do cachorro?"
 }
