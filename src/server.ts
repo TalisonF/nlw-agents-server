@@ -24,6 +24,8 @@ app.setValidatorCompiler(validatorCompiler);
 app.register(fastifyMultipart);
 
 app.get('/health', () => {
+  // biome-ignore lint/suspicious/noConsole: debug
+  console.log('Health check called!');
   return 'OK';
 });
 
@@ -36,4 +38,7 @@ app.register(uploadTextRoute);
 
 const PORT = env.PORT;
 
-app.listen({ port: PORT });
+app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
+  // biome-ignore lint/suspicious/noConsole: server start!
+  console.log(`Server running! check health: http://localhost:${PORT}/health`);
+});

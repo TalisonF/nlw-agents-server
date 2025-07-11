@@ -39,8 +39,7 @@ export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
         )
         .orderBy(
           sql`${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector desc`
-        )
-        .limit(5);
+        );
 
       let answer: string | null = null;
 
