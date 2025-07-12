@@ -32,3 +32,5 @@ jobs:
       - name: Push image
         run: |
           docker push talison737/nlw-agents-server:${{steps.generate_sha.outputs.sha}}
+          docker tag talison737/nlw-agents-server:${{steps.generate_sha.outputs.sha}} talison737/nlw-agents-server:latest
+          docker push talison737/nlw-agents-server:latest
