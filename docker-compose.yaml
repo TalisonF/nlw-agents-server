@@ -12,6 +12,7 @@ services:
       - 5432:5432
     volumes:
       - ./docker/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+      - 'db:/var/lib/postgresql/data'
     networks:
       - nlw-agents-net
   nlw-server:
@@ -21,6 +22,7 @@ services:
     ports:
       - 3333:3333
     environment:
+      - DATABASE_SSL=false
       - DATABASE_HOST=nlw-agents-pg
       - DATABASE_PORT=5432
       - DATABASE_USER=docker
@@ -35,3 +37,6 @@ services:
 networks:
     nlw-agents-net:
       driver: bridge
+
+volumes:
+  db:
