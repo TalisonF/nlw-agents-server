@@ -22,12 +22,7 @@ services:
     ports:
       - 3333:3333
     environment:
-      - DATABASE_SSL=false
-      - DATABASE_HOST=nlw-agents-pg
-      - DATABASE_PORT=5432
-      - DATABASE_USER=docker
-      - DATABASE_PASSWORD=docker
-      - DATABASE_NAME=agents
+      - DATABASE_URL=postgresql://docker:docker@nlw-agents-pg:5432/agents
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     depends_on:
       - nlw-agents-pg
