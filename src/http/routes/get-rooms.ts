@@ -4,7 +4,8 @@ import { db } from '../../db/connection.ts';
 import { schema } from '../../db/schema/index.ts';
 
 export const getRoomsRoute: FastifyPluginCallbackZod = (app) => {
-  app.get('/rooms', async () => {
+  app.get('/rooms', { preHandler: [app.authenticate] }, async (req) => {
+    const { id: userId } = req.user;
     const results = await db
       .select({
         id: schema.rooms.id,
@@ -14,6 +15,7 @@ export const getRoomsRoute: FastifyPluginCallbackZod = (app) => {
         createdAt: schema.rooms.createdAt,
       })
       .from(schema.rooms)
+      .where(eq(schema.rooms.userId, userId))
       .leftJoin(schema.questions, eq(schema.questions.roomId, schema.rooms.id))
       .groupBy(schema.rooms.id)
       .orderBy(schema.rooms.createdAt);

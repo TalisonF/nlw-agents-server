@@ -13,6 +13,7 @@ export const getRoomsQuestionsRoute: FastifyPluginCallbackZod = (app) => {
           roomId: z.string(),
         }),
       },
+      preHandler: [app.authenticate],
     },
     async (request) => {
       const { roomId } = request.params;

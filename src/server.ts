@@ -1,6 +1,13 @@
+import fCookie from '@fastify/cookie';
 import { fastifyCors } from '@fastify/cors';
+import fJWT, { type FastifyJWT } from '@fastify/jwt';
 import { fastifyMultipart } from '@fastify/multipart';
-import { fastify } from 'fastify';
+import {
+  type FastifyReply,
+  type FastifyRequest,
+  fastify,
+  type HookHandlerDoneFunction,
+} from 'fastify';
 import {
   serializerCompiler,
   validatorCompiler,
@@ -24,6 +31,31 @@ app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
 app.register(fastifyMultipart);
 
+app.register(fJWT, { secret: 'superSecretCode-CHANGE_THIS-USE_ENV_FILE' });
+
+app.addHook('preHandler', (req, _res, next) => {
+  req.jwt = app.jwt;
+  return next();
+});
+
+app.register(fCookie, {
+  secret: 'some-secret-key',
+  hook: 'preHandler',
+});
+
+app.decorate(
+  'authenticate',
+  (req: FastifyRequest, reply: FastifyReply, next: HookHandlerDoneFunction) => {
+    const token = req.headers.access_token || '';
+    if (!token) {
+      return reply.status(401).send({ message: 'Authentication required' });
+    }
+    const decoded = req.jwt.verify<FastifyJWT['user']>(`${token}`);
+    req.user = decoded;
+    return next();
+  }
+);
+
 app.get('/health', () => {
   // biome-ignore lint/suspicious/noConsole: debug
   console.log('Health check called!');
@@ -42,5 +74,5 @@ const PORT = env.PORT;
 
 app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
   // biome-ignore lint/suspicious/noConsole: server start!
-  console.log(`Server running! check health: http://localhost:${PORT}/health`);
+  console.log(`Server running!\ncheck health: http://localhost:${PORT}/health`);
 });

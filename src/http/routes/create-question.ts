@@ -17,6 +17,7 @@ export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
           question: z.string().min(1),
         }),
       },
+      preHandler: [app.authenticate],
     },
     async (request, reply) => {
       const { roomId } = request.params;

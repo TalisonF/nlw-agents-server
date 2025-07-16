@@ -16,6 +16,7 @@ export const uploadTextRoute: FastifyPluginCallbackZod = (app) => {
           text: z.string().min(10).max(1500),
         }),
       },
+      preHandler: [app.authenticate],
     },
     async (request, reply) => {
       const { roomId } = request.params;

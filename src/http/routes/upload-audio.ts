@@ -13,6 +13,7 @@ export const uploadAudioRoute: FastifyPluginCallbackZod = (app) => {
           roomId: z.string(),
         }),
       },
+      preHandler: [app.authenticate],
     },
     async (request, reply) => {
       const { roomId } = request.params;
