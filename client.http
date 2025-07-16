@@ -1,6 +1,6 @@
 # Variables
 
-@baseUrl = http://localhost:3334
+@baseUrl = http://localhost:3333
 
 # Health Check
 GET {{baseUrl}}/health
@@ -49,3 +49,17 @@ Content-Type: application/json
 {
   "question": "Qual o nome do cachorro?"
 }
+
+###
+
+# create user
+
+POST {{baseUrl}}/user/register
+Content-Type: application/json
+
+{
+  "email": "talison737@gmail.com",
+  "name": "Talison Freitas Araujo",
+  "password": "123456"
+}
+###

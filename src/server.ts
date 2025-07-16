@@ -13,6 +13,7 @@ import { getRoomsRoute } from './http/routes/get-rooms.ts';
 import { getRoomsQuestionsRoute } from './http/routes/get-rooms-questions.ts';
 import { uploadAudioRoute } from './http/routes/upload-audio.ts';
 import { uploadTextRoute } from './http/routes/upload-text.ts';
+import { userRoute } from './http/routes/user-routes.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -35,6 +36,7 @@ app.register(getRoomsQuestionsRoute);
 app.register(createQuestionRoute);
 app.register(uploadAudioRoute);
 app.register(uploadTextRoute);
+app.register(userRoute);
 
 const PORT = env.PORT;
 
