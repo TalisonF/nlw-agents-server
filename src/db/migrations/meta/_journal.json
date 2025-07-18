@@ -36,6 +36,13 @@
       "when": 1752637707594,
       "tag": "0004_wandering_doorman",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1752846662422,
+      "tag": "0005_daily_dazzler",
+      "breakpoints": true
     }
   ]
 }
