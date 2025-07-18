@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { pipeline } from 'node:stream';
 import util from 'node:util';
@@ -31,6 +32,15 @@ export const uploadDocumentRoute: FastifyPluginCallbackZod = (app) => {
         throw new Error('file not is a pdf!');
       }
 
+      const hash = crypto.createHash('md5');
+      // biome-ignore lint/suspicious/noEvolvingTypes: dev
+      const chunks = [];
+      for await (const chunk of file.file) {
+        chunks.push(chunk);
+        hash.update(chunk);
+      }
+      const calculatedMd5 = hash.digest('hex');
+
       const documentId = uuidV4();
       const tempFilePath = `./uploads/${documentId}.pdf`;
       if (!fs.existsSync('./uploads')) {
@@ -43,6 +53,7 @@ export const uploadDocumentRoute: FastifyPluginCallbackZod = (app) => {
         .insert(schema.documents)
         .values({
           roomId,
+          md5File: calculatedMd5,
           id: documentId,
           typeOfDocument: 'pdf',
           status: 'processing_queued',

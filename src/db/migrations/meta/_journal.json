@@ -43,6 +43,13 @@
       "when": 1752846662422,
       "tag": "0005_daily_dazzler",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1752847848630,
+      "tag": "0006_heavy_the_professor",
+      "breakpoints": true
     }
   ]
 }

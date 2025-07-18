@@ -9,6 +9,7 @@ export const documents = pgTable('documents', {
   status: text({
     enum: ['processing_queued', 'processed', 'process_fail'],
   }).notNull(),
+  md5File: text().notNull(),
   typeOfDocument: text({ enum: ['pdf'] }).notNull(),
   createdAt: timestamp().defaultNow().notNull(),
 });
