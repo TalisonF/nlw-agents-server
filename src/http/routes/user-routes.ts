@@ -39,7 +39,7 @@ export const userRoute: FastifyPluginCallbackZod = (app) => {
             password: hash,
           })
           .returning();
-        reply.status(201).send(newUser);
+        reply.status(201).send({ userId: newUser[0].id });
       } catch (e) {
         reply.code(500).send(e);
       }
