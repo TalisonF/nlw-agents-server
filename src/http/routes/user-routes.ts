@@ -94,4 +94,25 @@ export const userRoute: FastifyPluginCallbackZod = (app) => {
       return { accessToken: token };
     }
   );
+
+  app.get('/user', { preHandler: [app.authenticate] }, async (req, reply) => {
+    const { id: userId } = req.user;
+    const user = await db
+      .select({
+        id: schema.user.id,
+        name: schema.user.name,
+        email: schema.user.email,
+      })
+      .from(schema.user)
+      .where(eq(schema.user.id, userId))
+      .limit(1);
+
+    if (!user[0].email) {
+      return reply.code(404).send({
+        message: 'User not found!',
+      });
+    }
+
+    return { ...user[0] };
+  });
 };

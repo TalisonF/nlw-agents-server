@@ -13,6 +13,7 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod';
+import { sql } from './db/connection.ts';
 import { env } from './env.ts';
 import { createQuestionRoute } from './http/routes/create-question.ts';
 import { createRoomsRoute } from './http/routes/create-room.ts';
@@ -56,10 +57,13 @@ app.decorate(
   }
 );
 
-app.get('/health', () => {
+app.get('/health', async () => {
   // biome-ignore lint/suspicious/noConsole: debug
   console.log('Health check called!');
-  return 'OK';
+  const dbConnection = await sql`SELECT 1 AS DB_CONNECTED`;
+  return {
+    dataBaseCheck: dbConnection[0].db_connected === 1,
+  };
 });
 
 app.register(getRoomsRoute);
@@ -70,9 +74,9 @@ app.register(uploadAudioRoute);
 app.register(uploadTextRoute);
 app.register(userRoute);
 
-const PORT = env.PORT;
-
-app.listen({ port: PORT, host: '0.0.0.0' }).then(() => {
+app.listen({ port: env.PORT, host: env.HOST }).then(() => {
   // biome-ignore lint/suspicious/noConsole: server start!
-  console.log(`Server running!\ncheck health: http://localhost:${PORT}/health`);
+  console.log(
+    `Server running!\ncheck health: http://${env.HOST}:${env.PORT}/health`
+  );
 });
