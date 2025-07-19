@@ -20,8 +20,10 @@ import { createRoomsRoute } from './http/routes/create-room.ts';
 import { getRoomsRoute } from './http/routes/get-rooms.ts';
 import { getRoomsQuestionsRoute } from './http/routes/get-rooms-questions.ts';
 import { uploadAudioRoute } from './http/routes/upload-audio.ts';
+import { uploadDocumentRoute } from './http/routes/upload-document.ts';
 import { uploadTextRoute } from './http/routes/upload-text.ts';
 import { userRoute } from './http/routes/user-routes.ts';
+import './queue.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -30,7 +32,9 @@ app.register(fastifyCors, {
 });
 app.setSerializerCompiler(serializerCompiler);
 app.setValidatorCompiler(validatorCompiler);
-app.register(fastifyMultipart);
+app.register(fastifyMultipart, {
+  limits: { fileSize: 7 * 1024 * 1024 }, // Limite de 7MB para o arquivo
+});
 
 app.register(fJWT, { secret: 'superSecretCode-CHANGE_THIS-USE_ENV_FILE' });
 
@@ -68,6 +72,7 @@ app.get('/health', async () => {
 
 app.register(getRoomsRoute);
 app.register(createRoomsRoute);
+app.register(uploadDocumentRoute);
 app.register(getRoomsQuestionsRoute);
 app.register(createQuestionRoute);
 app.register(uploadAudioRoute);

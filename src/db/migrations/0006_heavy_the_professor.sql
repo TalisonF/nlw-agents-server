@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ADD COLUMN "md5_file" text NOT NULL;

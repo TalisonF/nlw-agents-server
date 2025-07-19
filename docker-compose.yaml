@@ -1,6 +1,15 @@
 version: '3.7'
 services: 
 
+  nlw-agents-redis:
+    container_name: nlw-agents-redis
+    image: redis:7.4-alpine 
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - nlw-agents-net
   nlw-agents-pg:
     container_name: nlw-agents-pg
     image: pgvector/pgvector:pg17
@@ -24,6 +33,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://docker:docker@nlw-agents-pg:5432/agents
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - REDIS_URL:"redis://redis:6379"
     depends_on:
       - nlw-agents-pg
     networks:
@@ -35,3 +45,4 @@ networks:
 
 volumes:
   db:
+  redis_data:
