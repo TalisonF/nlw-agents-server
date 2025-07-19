@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/useTrimStartEnd: dev */
 import { and, eq, sql } from 'drizzle-orm';
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod';
 import { z } from 'zod/v4';
@@ -35,7 +36,7 @@ export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
         .where(
           and(
             eq(schema.filesChunks.roomId, roomId),
-            sql`1 - (${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector) > 0.7`
+            sql`1 - (${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector) > 0.6`
           )
         )
         .orderBy(
@@ -46,15 +47,24 @@ export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
 
       if (chunks.length > 0) {
         const texts = chunks.map((chunk) => chunk.text);
-
         answer = await generateAnswer(question, texts);
+      } else {
+        answer =
+          'Não consegui encontrar informações para responder sua questão!';
       }
+      const embeddingsMatchedOnAnswerCount = `${chunks?.length ?? 0}`;
+      const embeddingsMatchedOnAnswer =
+        chunks?.map((chunk) => chunk.id).join(',') ?? '';
+
       const result = await db
         .insert(schema.questions)
         .values({
           roomId,
           question,
           answer,
+          embeddings,
+          embeddingsMatchedOnAnswerCount,
+          embeddingsMatchedOnAnswer,
         })
         .returning();
 

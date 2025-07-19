@@ -7,6 +7,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { z } from 'zod/v4';
 import { db } from '../../db/connection.ts';
 import { schema } from '../../db/schema/index.ts';
+import { pdfProcessingQueue } from '../../queue.ts';
 
 const pump = util.promisify(pipeline);
 
@@ -47,7 +48,21 @@ export const uploadDocumentRoute: FastifyPluginCallbackZod = (app) => {
         fs.mkdirSync('./uploads');
       }
 
-      await pump(file.file, fs.createWriteStream(tempFilePath));
+      await pump(chunks, fs.createWriteStream(tempFilePath));
+
+      await pdfProcessingQueue.add(
+        'process-pdf',
+        {
+          pdfPath: tempFilePath,
+          documentId,
+          roomId,
+          fileName: file.filename,
+        },
+        {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 1000 },
+        }
+      );
 
       const documentDB = await db
         .insert(schema.documents)

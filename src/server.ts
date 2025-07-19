@@ -23,6 +23,7 @@ import { uploadAudioRoute } from './http/routes/upload-audio.ts';
 import { uploadDocumentRoute } from './http/routes/upload-document.ts';
 import { uploadTextRoute } from './http/routes/upload-text.ts';
 import { userRoute } from './http/routes/user-routes.ts';
+import './queue.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 

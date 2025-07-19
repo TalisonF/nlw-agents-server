@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, vector } from 'drizzle-orm/pg-core';
 import { rooms } from './rooms.ts';
 
 export const questions = pgTable('questions', {
@@ -8,5 +8,8 @@ export const questions = pgTable('questions', {
     .notNull(),
   question: text().notNull(),
   answer: text(),
+  embeddings: vector({ dimensions: 768 }),
+  embeddingsMatchedOnAnswerCount: text(),
+  embeddingsMatchedOnAnswer: text(),
   createdAt: timestamp().defaultNow().notNull(),
 });
