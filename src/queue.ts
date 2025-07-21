@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/suspicious/noConsole: worker queue log */
 import { type Job, Queue, Worker } from 'bullmq';
-import { eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { default as Redis } from 'ioredis';
 import { db } from './db/connection.ts';
 import { schema } from './db/schema/index.ts';
 import { env } from './env.ts';
-import { generateEmbeddings } from './services/gemini.ts';
+import { generateEmbeddings, generateQuickResume } from './services/gemini.ts';
 import { extractTextFromPdf } from './utils/extractTextFromPdf.ts';
 import { chunkText } from './utils/textChunk.ts';
 
@@ -16,9 +16,9 @@ const connection = new Redis.default(env.REDIS_URL, {
 const pdfProcessingQueue = new Queue('pdfProcessing', { connection });
 
 async function processPdfJob(job: Job) {
-  const { pdfPath, documentId, roomId } = job.data;
+  const { pdfPath, documentId, roomId, fileName } = job.data;
   console.log(
-    `Iniciando processamento do PDF: ${pdfPath} para o documento ID: ${documentId}`
+    `Iniciando processamento do PDF: ${pdfPath} para o documento: ${fileName}`
   );
   try {
     const pdfContent = await extractTextFromPdf(pdfPath);
@@ -46,9 +46,53 @@ async function processPdfJob(job: Job) {
         .returning();
     }
 
+    const embeddingForResume = await generateEmbeddings(
+      'Qual é o resumo principal deste documento?'
+    );
+    const embeddingsAsString = `[${embeddingForResume.join(',')}]`;
+
+    const chunksForResume = await db
+      .select({
+        id: schema.filesChunks.id,
+        text: schema.filesChunks.text,
+        similarity: sql<number>`1 - (${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector)`,
+      })
+      .from(schema.filesChunks)
+      .where(
+        and(
+          eq(schema.filesChunks.documentId, documentId),
+          sql`1 - (${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector) > 0.6`
+        )
+      )
+      .orderBy(
+        sql`${schema.filesChunks.embeddings} <=> ${embeddingsAsString}::vector desc`
+      );
+    const resume = await generateQuickResume(
+      chunksForResume.map((chunk) => chunk.text)
+    );
+    console.log({
+      TotalChunks: textAndEmbeddings.length,
+      chunksForResume: chunksForResume.length,
+      resume,
+    });
+    const roomResumeConsult = await db
+      .select({
+        roomResume: schema.rooms.resumeIA,
+      })
+      .from(schema.rooms)
+      .where(eq(schema.rooms.id, roomId));
+    const roomResume = roomResumeConsult[0].roomResume ?? '';
+
+    const resumeRoom = await generateQuickResume([resume ?? '', roomResume]);
+
+    await db
+      .update(schema.rooms)
+      .set({ resumeIA: resumeRoom })
+      .where(eq(schema.rooms.id, roomId));
+
     await db
       .update(schema.documents)
-      .set({ status: 'processed' })
+      .set({ resumeIA: resume, status: 'processed' })
       .where(eq(schema.documents.id, documentId));
 
     console.log(

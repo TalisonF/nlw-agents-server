@@ -79,3 +79,30 @@ export async function generateAnswer(question: string, textsContext: string[]) {
   }
   return response.text;
 }
+
+export async function generateQuickResume(textsContext: string[]) {
+  const context = textsContext.join('\n\n');
+
+  const prompt = `
+    Por favor, resuma o seguinte textos: 
+
+    ${context}
+
+    INSTRUÇÕES:
+    - O resumo será para uma sala de bate papo
+    - Use apenas informações contidas no contexto enviado;
+    - O resumo deve ser conciso e ter no máximo 3-4 frases principais.
+    - Seja objetivo;
+    - Mantenha um tom educativo e profissional;
+  `.trim();
+
+  const response = await gemeni.models.generateContent({
+    model,
+    contents: [
+      {
+        text: prompt,
+      },
+    ],
+  });
+  return response.text;
+}

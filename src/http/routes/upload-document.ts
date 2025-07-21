@@ -68,6 +68,7 @@ export const uploadDocumentRoute: FastifyPluginCallbackZod = (app) => {
         .insert(schema.documents)
         .values({
           roomId,
+          fileName: file.filename,
           md5File: calculatedMd5,
           id: documentId,
           typeOfDocument: 'pdf',
