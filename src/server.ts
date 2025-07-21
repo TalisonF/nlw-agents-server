@@ -24,6 +24,7 @@ import { uploadDocumentRoute } from './http/routes/upload-document.ts';
 import { uploadTextRoute } from './http/routes/upload-text.ts';
 import { userRoute } from './http/routes/user-routes.ts';
 import './queue.ts';
+import { getRoomRoute } from './http/routes/get-room.ts';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -71,6 +72,7 @@ app.get('/health', async () => {
 });
 
 app.register(getRoomsRoute);
+app.register(getRoomRoute);
 app.register(createRoomsRoute);
 app.register(uploadDocumentRoute);
 app.register(getRoomsQuestionsRoute);

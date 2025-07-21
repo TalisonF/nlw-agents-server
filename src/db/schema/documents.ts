@@ -3,6 +3,8 @@ import { rooms } from './rooms.ts';
 
 export const documents = pgTable('documents', {
   id: uuid().primaryKey().defaultRandom(),
+  fileName: text(),
+  resumeIA: text(),
   roomId: uuid()
     .references(() => rooms.id)
     .notNull(),

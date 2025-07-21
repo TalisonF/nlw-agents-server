@@ -8,5 +8,6 @@ export const rooms = pgTable('rooms', {
     .notNull(),
   name: text().notNull(),
   description: text(),
+  resumeIA: text(),
   createdAt: timestamp().defaultNow().notNull(),
 });

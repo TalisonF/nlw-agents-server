@@ -71,6 +71,20 @@
       "when": 1752854709454,
       "tag": "0009_magical_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1752888060649,
+      "tag": "0010_broad_polaris",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1752889459400,
+      "tag": "0011_cynical_young_avengers",
+      "breakpoints": true
     }
   ]
 }
