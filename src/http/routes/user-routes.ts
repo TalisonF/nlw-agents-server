@@ -60,7 +60,6 @@ export const userRoute: FastifyPluginCallbackZod = (app) => {
       },
     },
     async (req, reply) => {
-      console.log({ req });
       const { email, password } = req.body;
       const user = await db
         .select({

@@ -52,7 +52,6 @@ app.register(fCookie, {
 app.decorate(
   'authenticate',
   (req: FastifyRequest, reply: FastifyReply, next: HookHandlerDoneFunction) => {
-    console.log({ headers: req.headers });
     const token = req.headers.authorization || req.headers.Authorization || '';
     if (!token) {
       return reply.status(401).send({ message: 'Authentication required' });
